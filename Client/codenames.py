@@ -21,10 +21,12 @@ class CardType4(Enum):
 #Card class
 class Card:
     #initializes
-    def __init__(self, img, typeOfCard, guessed):
+    def __init__(self, img, typeOfCard, guessed, words):
         self.img = img
         self.typeOfCard = typeOfCard
         self.guessed = guessed
+        self.words = words
+        
 
     def __repr__(self):  
         return "[Image:% s Color:% s, % s]" % (self.img, self.typeOfCard, self.guessed)
@@ -51,32 +53,45 @@ def loadImageSet():
     image_set = os.listdir(getImgDirectory())
     return image_set
 
-def selectImgs(image_set, sizeVal):
+def loadWordSet():
+    path = os.getcwd() 
+    parent = os.path.dirname(path) 
+    file = os.path.join(parent, 'output.txt')
+
+    words = []
+    with open(file) as f:
+        for line in f:
+            for word in line.split(','):
+                words.append(word.strip())
+    
+    return words
+        
+def selectCards(full_set, sizeVal, words):
 	
-    chosenImgs = []
-    randNums = random.sample(range(len(image_set)), NUM_CARDS)
+    chosenCards = []
+    randNums = random.sample(range(len(full_set)), NUM_CARDS)
 
     index = 0
     if sizeVal == 5:
         for i in CardType5:
             num = i.value
             while num > 0:
-                chosenImgs.append(Card(image_set[randNums[index]],i.name, False))
+                chosenCards.append(Card(full_set[randNums[index]],i.name, False, words))
                 num -= 1
                 index += 1
     elif sizeVal == 4:
         for i in CardType4:
             num = i.value
             while num > 0:
-                chosenImgs.append(Card(image_set[randNums[index]],i.name, False))
+                chosenCards.append(Card(full_set[randNums[index]],i.name, False, words))
                 num -= 1
                 index += 1
     
-    random.shuffle(chosenImgs)
-    return chosenImgs
+    random.shuffle(chosenCards)
+    return chosenCards
 
-def newGame(sizeVal):
-    cardSet = selectImgs(loadImageSet(), sizeVal)
+def newGame(sizeVal, words = False):
+    cardSet = selectCards(loadWordSet() if words else loadImageSet(), sizeVal, words)
     board = [[0,0,0,0,0], [0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
     if sizeVal == 5:
         board.append([0,0,0,0,0])

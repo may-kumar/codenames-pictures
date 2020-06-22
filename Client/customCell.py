@@ -33,29 +33,47 @@ class customCell(QWidget):
 
         self.resize(540, 340)
         self.card = cardClass
+        
+        if not self.card.words:
         #Aspect ratio has to 536:339 for the image to fit 
-        self.imgMap = QPixmap(codenames.getImgPath(cardClass.img))
+            self.imgMap = QPixmap(codenames.getImgPath(cardClass.img))
+            self.picSize = (self.imgMap.width(), self.imgMap.height())
+            rect = QRect(0,0 , self.picSize[0], self.picSize[1])
+            map1 = QBitmap(self.imgMap.size())
+            map1.fill(Qt.color0)
+
+            painter = QPainter(map1)
+            painter.setRenderHint(QPainter.Antialiasing)
+
+            painter.setBrush(Qt.color1)
+            painter.drawRoundedRect(rect ,10,10)
+
+            painter.end()
         
+            self.oriPic = QPixmap(self.imgMap)
         
-        self.picSize = (self.imgMap.width(), self.imgMap.height())
-
-
-        rect = QRect(0,0 , self.picSize[0], self.picSize[1])
-        map1 = QBitmap(self.imgMap.size())
-        map1.fill(Qt.color0)
-
-        painter = QPainter(map1)
-        painter.setRenderHint(QPainter.Antialiasing)
-
-        painter.setBrush(Qt.color1)
-        painter.drawRoundedRect(rect ,10,10)
-
-        painter.end()
+            self.imgMap.setMask(map1)
         
-        self.oriPic = QPixmap(self.imgMap)
+        else:
+            self.imgMap = QPixmap(600,300)
+            self.imgMap.fill(Qt.color0)
+            
+            painter = QPainter(self.imgMap)
+            painter.setRenderHint(QPainter.Antialiasing)
+            
+            painter.drawRoundedRect(QRect(0,0,600,300) ,10,10)
+            
+            font = QFont()
+            font.setFamily("Times")
+            font.setBold(True)
+            font.setPointSize(40)
+            painter.setFont(font)
+            
+            painter.drawText(self.imgMap.rect(), Qt.AlignCenter, self.card.img)
+            painter.end()
         
-        self.imgMap.setMask(map1)
-
+            
+            
         painter = QPainter(self.imgMap)
         font = QFont()
         font.setFamily("Times")
@@ -64,6 +82,9 @@ class customCell(QWidget):
         painter.setFont(font)
 
         painter.drawText(7,35, cellID)
+        
+            
+        
         painter.end()
 
         self.cellID = cellID
@@ -92,7 +113,9 @@ class customCell(QWidget):
           'GRAY0':QColor(220, 220, 220, alpha), 'GRAY1':  QColor(255,255,255, alpha), 
           'BLACK0':  QColor(0,0,0,alpha), 'BLACK1': QColor(0,0,0,alpha)}
 
-
+        if self.card.words:
+            colors['GRAY0'] = QColor(148, 0, 211, alpha)
+            colors['GRAY1'] = QColor(128,0,128, alpha)
         teamStr = self.card.typeOfCard
         if teamStr[0:4] != 'TEAM':
             return colors[teamStr + val1]
@@ -129,7 +152,10 @@ class customCell(QWidget):
             
             painter = QPainter(img)
             painter.setPen(QPen(self.getCol('0'),  1, Qt.SolidLine))
-            painter.setBrush(QBrush(self.getCol('1'),  Qt.DiagCrossPattern))
+            if self.card.words:
+                painter.setBrush(QBrush(self.getCol('1', 120),  Qt.FDiagPattern))
+            else:
+                painter.setBrush(QBrush(self.getCol('1'),  Qt.DiagCrossPattern))
             #painter.setBrush(QBrush(self.getCol('1', 120),  Qt.FDiagPattern))
             
             # painter.drawRoundedRect(0,0, width, height, 10, 10)
@@ -182,12 +208,18 @@ class customCell(QWidget):
         painter = QPainter(back)
 
         
-
-        painter.drawPixmap(QRect( 15, 10, 506, 320), self.imgMap.scaledToHeight(320),  self.imgMap.scaledToHeight(320).rect())
+        if self.card.words:
+            painter.drawPixmap(QRect( 10, 5, 590, 295), self.imgMap.scaledToHeight(295),  self.imgMap.scaledToHeight(295).rect())
+        else:
+            painter.drawPixmap(QRect( 15, 10, 506, 320), self.imgMap.scaledToHeight(320),  self.imgMap.scaledToHeight(320).rect())
         
         painter.setPen(QPen(self.getCol('0'), 20))
         painter.setBrush(self.getCol('0', 30))
-        painter.drawRoundedRect(0,0, 535, 339, 10, 10)
+        
+        if self.card.words:
+            painter.drawRoundedRect(0,0, 600, 300, 10, 10)
+        else:
+            painter.drawRoundedRect(0,0, 535, 339, 10, 10)
 
         painter.end()
 
@@ -225,10 +257,11 @@ class customCell(QWidget):
         self.arrowKeyPress.emit(arr[0], arr[1], self.cellID)
 
     def mouseReleaseEvent(self, e):
-        if self.viewType:
+        if self.viewType or self.card.guessed:
             return 
-        # print(e.x(), e.y(), self.wid_spa, self.hit_spa, (self.hit_spa + 95.0*self.scale/339.0))
-        if (not self.card.guessed) and e.x() >= self.wid_spa/2 and e.y() >= self.hit_spa/2 and (e.x() + e.y()) < (self.hit_spa/2 +self.wid_spa/2 + 90.0*self.scale/339.0):
+        if self.card.words:
+            self.clueClicked.emit( self.cellID)
+        elif e.x() >= self.wid_spa/2 and e.y() >= self.hit_spa/2 and (e.x() + e.y()) < (self.hit_spa/2 +self.wid_spa/2 + 90.0*self.scale/339.0):
             self.clueClicked.emit( self.cellID)
         else:
             self.viewImage.emit( self.cellID)

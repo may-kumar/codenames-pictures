@@ -126,16 +126,19 @@ class serverScreen(QWidget):
         self.lblTurn.setStyleSheet("QLabel {color : purple; }")
 
         self.dimsChkBox = QCheckBox("5x5 Board?")
+        self.wordsChkBox = QCheckBox("Words?")
         
         self.scoreGrid = QGridLayout()
         
         
         self.scoreGrid.addWidget(self.dimsChkBox, 0, 0, 1, 3)
+        self.scoreGrid.addWidget(self.wordsChkBox, 1, 0, 1, 3)
         
-        self.scoreGrid.addWidget(self.lblTm1, 1, 0)
-        self.scoreGrid.addWidget(self.lblDash, 1, 1)
-        self.scoreGrid.addWidget(self.lblTm2, 1, 2)
-        self.scoreGrid.addWidget(self.lblTurn, 2, 0, 1,3)
+        
+        self.scoreGrid.addWidget(self.lblTm1, 2, 0)
+        self.scoreGrid.addWidget(self.lblDash, 2, 1)
+        self.scoreGrid.addWidget(self.lblTm2, 2, 2)
+        self.scoreGrid.addWidget(self.lblTurn, 3, 0, 1,3)
 
         self.grid.addLayout(self.scoreGrid, 0,2, 4, 1)
 
@@ -152,7 +155,7 @@ class serverScreen(QWidget):
 
 
     def start_server(self):
-        HOST_PORT = 8080
+        HOST_PORT = 5556
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind(('', HOST_PORT))
         server.listen(10)
@@ -181,7 +184,7 @@ class serverScreen(QWidget):
             fullDims = 4
             
 
-        self.curFullBoardx = codenames.newGame(fullDims) #Make a board to play with
+        self.curFullBoardx = codenames.newGame(fullDims, self.wordsChkBox.isChecked()) #Make a board to play with
         self.curHidBoardx = codenames.getCleanBoard(self.curFullBoardx)
 
         whichTeamsTurn = random.randint(0, 1)
