@@ -129,7 +129,7 @@ if __name__ == '__main__':
         GUI.updateCell(i,j, True, ImgBoard[i][j].typeOfCard)
         
     dims = 4
-    ImgBoard = codenames.newGame(dims, True)
+    ImgBoard = codenames.newGame(dims, 0.5)
     #ImgBoard = codenames.getCleanBoard(ImgBoard)
     # print(ImgBoard)
     app = QApplication(sys.argv)

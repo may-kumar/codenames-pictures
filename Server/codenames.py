@@ -3,7 +3,6 @@ from enum import Enum
 import os
 from copy import deepcopy
 
-NUM_CARDS = 25
 SIZE = 5
 
 class CardType5(Enum):
@@ -29,7 +28,7 @@ class Card:
         
 
     def __repr__(self):  
-        return "[Image:% s Color:% s, % s]" % (self.img, self.typeOfCard, self.guessed)
+        return "[Image:% s Color:% s, % s, % s]" % (self.img, self.typeOfCard, self.guessed, self.words)
     
     #prints the card's image name
     # def printWord(self):
@@ -66,32 +65,53 @@ def loadWordSet():
     
     return words
         
-def selectCards(full_set, sizeVal, words):
+def selectCards(sizeVal, ratio):
 	
     chosenCards = []
-    randNums = random.sample(range(len(full_set)), NUM_CARDS)
-
+    if sizeVal == 4:
+        NUM_CARDS = 20
+    elif sizeVal == 5:
+        NUM_CARDS = 25
+    
+    noWords = int(NUM_CARDS * ratio)
+    noPics  = NUM_CARDS - noWords
+    
+    word_set = loadWordSet()
+    pic_set  = loadImageSet()
+    
+    randNumsWords = random.sample(range(len(word_set)), noWords)
+    randNumsPics  = random.sample(range(len(pic_set)), noPics)
+    
+    full_set = []
+    for word in randNumsWords:
+        full_set.append((word_set[word], True))
+        
+    for pic in randNumsPics:
+        full_set.append((pic_set[pic], False))
+    
+    random.shuffle(full_set)
+    
     index = 0
     if sizeVal == 5:
         for i in CardType5:
             num = i.value
             while num > 0:
-                chosenCards.append(Card(full_set[randNums[index]],i.name, False, words))
+                chosenCards.append(Card(full_set[index][0],i.name, False, full_set[index][1]))
                 num -= 1
                 index += 1
     elif sizeVal == 4:
         for i in CardType4:
             num = i.value
             while num > 0:
-                chosenCards.append(Card(full_set[randNums[index]],i.name, False, words))
+                chosenCards.append(Card(full_set[index][0],i.name, False, full_set[index][1]))
                 num -= 1
                 index += 1
     
     random.shuffle(chosenCards)
     return chosenCards
 
-def newGame(sizeVal, words = False):
-    cardSet = selectCards(loadWordSet() if words else loadImageSet(), sizeVal, words)
+def newGame(sizeVal, ratio = 0): #ratio is words to pictures, 0 means no words
+    cardSet = selectCards(sizeVal, ratio)
     board = [[0,0,0,0,0], [0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
     if sizeVal == 5:
         board.append([0,0,0,0,0])

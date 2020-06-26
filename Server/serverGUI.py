@@ -126,19 +126,29 @@ class serverScreen(QWidget):
         self.lblTurn.setStyleSheet("QLabel {color : purple; }")
 
         self.dimsChkBox = QCheckBox("5x5 Board?")
-        self.wordsChkBox = QCheckBox("Words?")
+        
+        self.wordsLabel = QLabel('Word Ratio: 0.0\n (0 for no words)', alignment=Qt.AlignCenter)
+        self.wordsSlider = QSlider(Qt.Horizontal)
+        self.wordsSlider.setMinimum(0)
+        self.wordsSlider.setMaximum(10)
+        self.wordsSlider.setTickInterval(1)
+        self.wordsSlider.setTickPosition(QSlider.TicksBelow)
+        self.wordsSlider.valueChanged.connect(self.sliderValue)
+        
+        
         
         self.scoreGrid = QGridLayout()
         
         
         self.scoreGrid.addWidget(self.dimsChkBox, 0, 0, 1, 3)
-        self.scoreGrid.addWidget(self.wordsChkBox, 1, 0, 1, 3)
+        self.scoreGrid.addWidget(self.wordsLabel, 1, 0, 1, 3)
+        self.scoreGrid.addWidget(self.wordsSlider, 2, 0, 1, 3)
         
         
-        self.scoreGrid.addWidget(self.lblTm1, 2, 0)
-        self.scoreGrid.addWidget(self.lblDash, 2, 1)
-        self.scoreGrid.addWidget(self.lblTm2, 2, 2)
-        self.scoreGrid.addWidget(self.lblTurn, 3, 0, 1,3)
+        self.scoreGrid.addWidget(self.lblTm1, 3, 0)
+        self.scoreGrid.addWidget(self.lblDash, 3, 1)
+        self.scoreGrid.addWidget(self.lblTm2, 3, 2)
+        self.scoreGrid.addWidget(self.lblTurn, 4, 0, 1,3)
 
         self.grid.addLayout(self.scoreGrid, 0,2, 4, 1)
 
@@ -152,7 +162,9 @@ class serverScreen(QWidget):
 
         self.updateUserText.connect(self.fupdateUsersTextBox)
         self.updateStatusText.connect(self.fupdateStatusTextBox)
-
+    
+    def sliderValue(self):
+        self.wordsLabel.setText('Word Ratio: ' + str(self.wordsSlider.value()/10) + '\n (0 for no words)')
 
     def start_server(self):
         HOST_PORT = 5556
@@ -184,7 +196,7 @@ class serverScreen(QWidget):
             fullDims = 4
             
 
-        self.curFullBoardx = codenames.newGame(fullDims, self.wordsChkBox.isChecked()) #Make a board to play with
+        self.curFullBoardx = codenames.newGame(fullDims, self.wordsSlider.value()/10) #Make a board to play with
         self.curHidBoardx = codenames.getCleanBoard(self.curFullBoardx)
 
         whichTeamsTurn = random.randint(0, 1)
