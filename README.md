@@ -3,7 +3,7 @@ A small GUI made using PyQt5 to play codenames pictures
 
 ## Usage
 Any images to be used should be in the output folder.  
-Words to be used should be put in output.txt folder.  
+Words to be used should be put in output.txt file.  
 
 The server reads only filenames from the image folder, so both parties need to have the same output folder. The words are sent from the server itself, so for an only words game, only the server requires output.txt.  
 
