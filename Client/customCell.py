@@ -56,7 +56,7 @@ class customCell(QWidget):
         
         else:
             self.imgMap = QPixmap(600,300)
-            self.imgMap.fill(Qt.color0)
+            self.imgMap.fill(QColor('#E5B372'))
             
             painter = QPainter(self.imgMap)
             painter.setRenderHint(QPainter.Antialiasing)
@@ -64,7 +64,7 @@ class customCell(QWidget):
             painter.drawRoundedRect(QRect(0,0,600,300) ,10,10)
             
             font = QFont()
-            font.setFamily("Times")
+            font.setFamily("Segoe UI")
             font.setBold(True)
             font.setPointSize(40)
             painter.setFont(font)
@@ -113,9 +113,10 @@ class customCell(QWidget):
           'GRAY0':QColor(220, 220, 220, alpha), 'GRAY1':  QColor(255,255,255, alpha), 
           'BLACK0':  QColor(0,0,0,alpha), 'BLACK1': QColor(0,0,0,alpha)}
 
-        if self.card.words:
-            colors['GRAY0'] = QColor(148, 0, 211, alpha)
-            colors['GRAY1'] = QColor(128,0,128, alpha)
+        #if self.card.words:
+        #    colors['GRAY0'] = QColor(148, 0, 211, alpha)
+        #    colors['GRAY1'] = QColor(128,0,128, alpha)
+        
         teamStr = self.card.typeOfCard
         if teamStr[0:4] != 'TEAM':
             return colors[teamStr + val1]
@@ -152,15 +153,18 @@ class customCell(QWidget):
             
             painter = QPainter(img)
             painter.setPen(QPen(self.getCol('0'),  1, Qt.SolidLine))
-            if self.card.words:
-                painter.setBrush(QBrush(self.getCol('1', 120),  Qt.FDiagPattern))
-            else:
-                painter.setBrush(QBrush(self.getCol('1'),  Qt.DiagCrossPattern))
+            
+            # if self.card.words:
+                # painter.setBrush(QBrush(self.getCol('1', 120),  Qt.FDiagPattern))
+            # else:
+                # painter.setBrush(QBrush(self.getCol('1'),  Qt.DiagCrossPattern))
+            
             #painter.setBrush(QBrush(self.getCol('1', 120),  Qt.FDiagPattern))
             
             # painter.drawRoundedRect(0,0, width, height, 10, 10)
             # painter.drawPixmap( QRectF(img.rect()), img, QRectF(img.rect()))
             
+            painter.setBrush(QBrush(self.getCol('1', 120),  Qt.DiagCrossPattern))
             
             painter.drawRect(QRectF(img.rect()))
             painter.end()

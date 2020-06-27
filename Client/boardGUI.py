@@ -133,14 +133,13 @@ if __name__ == '__main__':
     #ImgBoard = codenames.getCleanBoard(ImgBoard)
     # print(ImgBoard)
     app = QApplication(sys.argv)
-    GUI = GameBoardGUI(dims, ImgBoard,1,  x)
 
     ImgBoard[2][2].guessed = True
 
     ImgBoard[1][2].guessed = True
     GUI = GameBoardGUI(dims, ImgBoard,1,  x)
 
-    GUI.updateGridValues(dims, ImgBoard, True)
+    GUI.updateGridValues(dims, ImgBoard, sys.argv[1] == '1')
     GUI.showMaximized()
     sys.exit(app.exec_())
 
