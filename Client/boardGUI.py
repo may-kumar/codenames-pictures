@@ -129,7 +129,7 @@ if __name__ == '__main__':
         GUI.updateCell(i,j, True, ImgBoard[i][j].typeOfCard)
         
     dims = 4
-    ImgBoard = codenames.newGame(dims, 0.5)
+    ImgBoard = codenames.newGame(dims, 0)
     #ImgBoard = codenames.getCleanBoard(ImgBoard)
     # print(ImgBoard)
     app = QApplication(sys.argv)
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     ImgBoard[1][2].guessed = True
     GUI = GameBoardGUI(dims, ImgBoard,1,  x)
 
-    GUI.updateGridValues(dims, ImgBoard, sys.argv[1] == '1')
+    #GUI.updateGridValues(dims, ImgBoard, sys.argv[1] == '1')
     GUI.showMaximized()
     sys.exit(app.exec_())
 
