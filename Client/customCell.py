@@ -177,6 +177,12 @@ class customCell(QWidget):
 
     def setGuessColor(self):#Show color on the image
 
+        if self.card.words:
+            img = QPixmap(590 , 295)
+            r,g,b,_ = self.getCol('1').getRgb()
+            img.fill(QColor(r, g, b)) 
+            self.imgMap = img
+            
 
         painter = QPainter(self.imgMap)
         painter.setBrush(self.getCol('1'))
@@ -185,13 +191,29 @@ class customCell(QWidget):
         font = QFont()
         font.setFamily("Times")
         font.setBold(True)
-        font.setPointSize(30)
+        font.setPointSize(self.height()/10)
         painter.setFont(font)
         pen = QPen()
         r,g,b,_ = self.getCol('1').getRgb()
         pen.setColor(QColor(255-r, 255-g, 255-b))
         painter.setPen(pen)
         painter.drawText(7,35, self.cellID)
+
+        if self.card.words:
+            font = QFont()
+            font.setFamily("Segoe UI")
+            font.setBold(True)
+            font.setPointSize(self.height()/8)
+            painter.setFont(font)
+
+            pen.setColor(QColor(255 - r, 255 - g, 255 - b))
+            painter.setPen(pen)
+
+            painter.drawText(self.imgMap.rect(), Qt.AlignCenter, self.card.img)
+         
+
+
+
         painter.end()
 
         
